@@ -94,7 +94,7 @@ class ViewController: UIViewController, RadarDelegate {
                 
                 let statusString = Utils.stringForStatus(status)
                 print(statusString)
-                self.showAlert(statusString, message: nil)
+                self.showAlert(title: statusString, message: nil)
                 
                 if status == .success {
                     if let user = user, let geofences = user.geofences {
@@ -126,7 +126,7 @@ class ViewController: UIViewController, RadarDelegate {
     func didReceiveEvents(_ events: [RadarEvent], user: RadarUser) {
         for event in events {
             let eventString = Utils.stringForEvent(event)
-            self.showNotification("Event", body: eventString)
+            self.showNotification(title: "Event", body: eventString)
         }
     }
     
@@ -135,14 +135,14 @@ class ViewController: UIViewController, RadarDelegate {
         print(statusString)
     }
     
-    func showAlert(_ title: String, message: String?) {
+    func showAlert(title: String, message: String?) {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert);
         alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         
         self.present(alertController, animated: true, completion: nil)
     }
     
-    func showNotification(_ title: String, body: String) {
+    func showNotification(title: String, body: String) {
         let center = UNUserNotificationCenter.current()
         
         let identifier = body
