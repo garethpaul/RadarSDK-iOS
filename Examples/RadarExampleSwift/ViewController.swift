@@ -29,7 +29,6 @@ class ViewController: UIViewController, RadarDelegate {
     
     func setupView() {
         self.view.backgroundColor = UIColor.white
-
         
         let boldFont = UIFont.boldSystemFont(ofSize: 17)
         let normalFont = UIFont.systemFont(ofSize: 17)
