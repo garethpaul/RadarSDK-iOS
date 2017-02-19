@@ -45,8 +45,6 @@ class ViewController: UIViewController, RadarDelegate {
         let trackOnceButton = UIButton(type: .roundedRect)
         trackOnceButton.setTitle("Track Once", for: .normal)
         trackOnceButton.titleLabel?.font = boldFont
-
-
         trackOnceButton.addTarget(self, action: #selector(trackOnce(_:)), for: [.touchUpInside])
         
         let trackingTitleLabel = UILabel()
@@ -88,7 +86,7 @@ class ViewController: UIViewController, RadarDelegate {
         }
     }
     
-    public func trackOnce(_ trackingButton: UIButton) {
+    func trackOnce(_ trackingButton: UIButton) {
         trackingButton.isEnabled = false
         
         Radar.trackOnce(completionHandler: { (status: RadarStatus, location: CLLocation?, events: [RadarEvent]?, user: RadarUser?) in
@@ -98,7 +96,6 @@ class ViewController: UIViewController, RadarDelegate {
                 let statusString = Utils.stringForStatus(status)
                 print(statusString)
                 self.showAlert(statusString, message: nil)
-                
                 if status == .success {
                     if let user = user, let geofences = user.geofences {
                         for geofence in geofences {
