@@ -45,7 +45,7 @@ class ViewController: UIViewController, RadarDelegate {
         let trackOnceButton = UIButton(type: .roundedRect)
         trackOnceButton.setTitle("Track Once", for: .normal)
         trackOnceButton.titleLabel?.font = boldFont
-        trackOnceButton.addTarget(self, action: #selector(trackOnce(_:)), for: [.touchUpInside])
+        trackOnceButton.addTarget(self, action: #selector(trackOnce(trackingButton:)), for: [.touchUpInside])
         
         let trackingTitleLabel = UILabel()
         trackingTitleLabel.text = "Tracking"
@@ -53,7 +53,7 @@ class ViewController: UIViewController, RadarDelegate {
         
         let trackingSwitch = UISwitch()
         trackingSwitch.isOn = Radar.isTracking() && Radar.authorizationStatus() == .authorizedAlways
-        trackingSwitch.addTarget(self, action: #selector(trackingChanged(_:)), for: .valueChanged)
+        trackingSwitch.addTarget(self, action: #selector(trackingChanged(trackingSwitch:)), for: .valueChanged)
         
         let arrangedSubviews = [
             userIdTitleLabel,
@@ -86,7 +86,7 @@ class ViewController: UIViewController, RadarDelegate {
         }
     }
     
-    func trackOnce(_ trackingButton: UIButton) {
+    func trackOnce(trackingButton: UIButton) {
         trackingButton.isEnabled = false
         
         Radar.trackOnce(completionHandler: { (status: RadarStatus, location: CLLocation?, events: [RadarEvent]?, user: RadarUser?) in
@@ -96,6 +96,7 @@ class ViewController: UIViewController, RadarDelegate {
                 let statusString = Utils.stringForStatus(status)
                 print(statusString)
                 self.showAlert(statusString, message: nil)
+                
                 if status == .success {
                     if let user = user, let geofences = user.geofences {
                         for geofence in geofences {
@@ -115,7 +116,7 @@ class ViewController: UIViewController, RadarDelegate {
         })
     }
     
-    func trackingChanged(_ trackingSwitch: UISwitch) {
+    func trackingChanged(trackingSwitch: UISwitch) {
         if trackingSwitch.isOn {
             Radar.startTracking()
         } else {
@@ -130,7 +131,7 @@ class ViewController: UIViewController, RadarDelegate {
         }
     }
     
-    @objc(didFailWithStatus:) func didFail(status: RadarStatus) {
+    func didFail(status: RadarStatus) {
         let statusString = Utils.stringForStatus(status)
         print(statusString)
     }
