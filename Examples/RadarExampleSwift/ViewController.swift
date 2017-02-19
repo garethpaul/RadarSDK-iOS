@@ -29,6 +29,7 @@ class ViewController: UIViewController, RadarDelegate {
     
     func setupView() {
         self.view.backgroundColor = UIColor.white
+
         
         let boldFont = UIFont.boldSystemFont(ofSize: 17)
         let normalFont = UIFont.systemFont(ofSize: 17)
@@ -44,7 +45,9 @@ class ViewController: UIViewController, RadarDelegate {
         let trackOnceButton = UIButton(type: .roundedRect)
         trackOnceButton.setTitle("Track Once", for: .normal)
         trackOnceButton.titleLabel?.font = boldFont
-        trackOnceButton.addTarget(self, action: #selector(trackOnce(trackingButton:)), for: [.touchUpInside])
+
+
+        trackOnceButton.addTarget(self, action: #selector(trackOnce(_:)), for: [.touchUpInside])
         
         let trackingTitleLabel = UILabel()
         trackingTitleLabel.text = "Tracking"
@@ -52,7 +55,7 @@ class ViewController: UIViewController, RadarDelegate {
         
         let trackingSwitch = UISwitch()
         trackingSwitch.isOn = Radar.isTracking() && Radar.authorizationStatus() == .authorizedAlways
-        trackingSwitch.addTarget(self, action: #selector(trackingChanged(trackingSwitch:)), for: .valueChanged)
+        trackingSwitch.addTarget(self, action: #selector(trackingChanged(_:)), for: .valueChanged)
         
         let arrangedSubviews = [
             userIdTitleLabel,
@@ -85,7 +88,7 @@ class ViewController: UIViewController, RadarDelegate {
         }
     }
     
-    func trackOnce(trackingButton: UIButton) {
+    public func trackOnce(_ trackingButton: UIButton) {
         trackingButton.isEnabled = false
         
         Radar.trackOnce(completionHandler: { (status: RadarStatus, location: CLLocation?, events: [RadarEvent]?, user: RadarUser?) in
@@ -94,7 +97,7 @@ class ViewController: UIViewController, RadarDelegate {
                 
                 let statusString = Utils.stringForStatus(status)
                 print(statusString)
-                self.showAlert(title: statusString, message: nil)
+                self.showAlert(statusString, message: nil)
                 
                 if status == .success {
                     if let user = user, let geofences = user.geofences {
@@ -115,7 +118,7 @@ class ViewController: UIViewController, RadarDelegate {
         })
     }
     
-    func trackingChanged(trackingSwitch: UISwitch) {
+    func trackingChanged(_ trackingSwitch: UISwitch) {
         if trackingSwitch.isOn {
             Radar.startTracking()
         } else {
@@ -126,23 +129,23 @@ class ViewController: UIViewController, RadarDelegate {
     func didReceiveEvents(_ events: [RadarEvent], user: RadarUser) {
         for event in events {
             let eventString = Utils.stringForEvent(event)
-            self.showNotification(title: "Event", body: eventString)
+            self.showNotification("Event", body: eventString)
         }
     }
     
-    func didFail(status: RadarStatus) {
+    @objc(didFailWithStatus:) func didFail(status: RadarStatus) {
         let statusString = Utils.stringForStatus(status)
         print(statusString)
     }
     
-    func showAlert(title: String, message: String?) {
+    func showAlert(_ title: String, message: String?) {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert);
         alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         
         self.present(alertController, animated: true, completion: nil)
     }
     
-    func showNotification(title: String, body: String) {
+    func showNotification(_ title: String, body: String) {
         let center = UNUserNotificationCenter.current()
         
         let identifier = body
